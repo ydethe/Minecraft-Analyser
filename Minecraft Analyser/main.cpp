@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "packets.h"
+#include "unpack.h"
 
 /* ethernet headers are always exactly 14 bytes */
 #define SIZE_ETHERNET 14
@@ -9,9 +10,11 @@ void myCallback(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
     const struct sniff_ethernet *ethernet; /* The ethernet header */
 	const struct sniff_ip *ip; /* The IP header */
 	const struct sniff_tcp *tcp; /* The TCP header */
-	const u_char *payload; /* Packet payload */
+    unsigned char *payload; /* Packet payload */
+    int packet_id;
+    double x, y, z;
     
-	u_int size_ip;
+    u_int size_ip;
 	u_int size_tcp;
     
     ethernet = (struct sniff_ethernet*)(packet);
@@ -27,9 +30,15 @@ void myCallback(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 		printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
 		return;
 	}
-	payload = (u_char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
+	payload = (unsigned char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
     
-    std::cout << ethernet->ether_shost << std::endl;
+    packet_id = (int)payload[0];
+    if ( packet_id == 11 && ntohs(tcp->th_dport) == 25565) {
+        x = unpack(payload+1);
+        y = unpack(payload+9);
+        z = unpack(payload+25);
+        std::cout << "Paquet intercepte -> " << x << ", " << y << ", " << z << std::endl;
+    }
     
 }
 
@@ -43,8 +52,8 @@ int main(int argc, char *argv[])
     
     /* Define the device */
     //dev = pcap_lookupdev(errbuf);
-    //dev = "en1";
-    dev = argv[1];
+    dev = "en1";
+    //dev = argv[1];
     if (dev == NULL) {
         fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
         return(2);
