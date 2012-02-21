@@ -10,6 +10,10 @@
 #define Minecraft_Analyser_packets_h
 
 #include <netinet/tcp_seq.h>
+#include <netinet/if_ether.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <net/if.h>
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <pcap.h>
@@ -19,6 +23,20 @@
 
 /* TCP header */
 typedef u_int tcp_seq;
+
+/* We've included the UDP header struct for your ease of customization.
+ * For your protocol, you might want to look at netinet/tcp.h for hints
+ * on how to deal with single bits or fields that are smaller than a byte
+ * in length.
+ *
+ * Per RFC 768, September, 1981.
+ */
+struct UDP_hdr {
+	u_short	uh_sport;		/* source port */
+	u_short	uh_dport;		/* destination port */
+	u_short	uh_ulen;		/* datagram length */
+	u_short	uh_sum;			/* datagram checksum */
+};
 
 /* Ethernet header */
 struct sniff_ethernet {

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9951913214F16866005A5E1D /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9951913114F16866005A5E1D /* unpack.cpp */; };
+		9951913714F1ABE9005A5E1D /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9951913614F1ABE9005A5E1D /* player.cpp */; };
+		99865AD514F30B51005BCAF8 /* decomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99865AD414F30B51005BCAF8 /* decomp.cpp */; };
 		99AA72E814EC550900FB56E4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99AA72E714EC550900FB56E4 /* main.cpp */; };
 		99AA72EA14EC550900FB56E4 /* Minecraft_Analyser.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 99AA72E914EC550900FB56E4 /* Minecraft_Analyser.1 */; };
 /* End PBXBuildFile section */
@@ -25,6 +28,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9951913114F16866005A5E1D /* unpack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unpack.cpp; sourceTree = "<group>"; };
+		9951913614F1ABE9005A5E1D /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = player.cpp; sourceTree = "<group>"; };
+		9951913814F1ABF3005A5E1D /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
+		99865AD414F30B51005BCAF8 /* decomp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decomp.cpp; sourceTree = "<group>"; };
+		9994F05114EDB3D6002EA017 /* packets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packets.h; sourceTree = "<group>"; };
+		9994F05A14EF1850002EA017 /* unpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unpack.h; sourceTree = "<group>"; };
 		99AA72E314EC550900FB56E4 /* Minecraft Analyser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Minecraft Analyser"; sourceTree = BUILT_PRODUCTS_DIR; };
 		99AA72E714EC550900FB56E4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		99AA72E914EC550900FB56E4 /* Minecraft_Analyser.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Minecraft_Analyser.1; sourceTree = "<group>"; };
@@ -60,6 +69,12 @@
 		99AA72E614EC550900FB56E4 /* Minecraft Analyser */ = {
 			isa = PBXGroup;
 			children = (
+				9994F05114EDB3D6002EA017 /* packets.h */,
+				9994F05A14EF1850002EA017 /* unpack.h */,
+				9951913114F16866005A5E1D /* unpack.cpp */,
+				99865AD414F30B51005BCAF8 /* decomp.cpp */,
+				9951913814F1ABF3005A5E1D /* player.h */,
+				9951913614F1ABE9005A5E1D /* player.cpp */,
 				99AA72E714EC550900FB56E4 /* main.cpp */,
 				99AA72E914EC550900FB56E4 /* Minecraft_Analyser.1 */,
 			);
@@ -118,6 +133,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				99AA72E814EC550900FB56E4 /* main.cpp in Sources */,
+				9951913214F16866005A5E1D /* unpack.cpp in Sources */,
+				9951913714F1ABE9005A5E1D /* player.cpp in Sources */,
+				99865AD514F30B51005BCAF8 /* decomp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +192,11 @@
 		99AA72EE14EC550900FB56E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-lpcap",
+					"-lz",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -181,6 +204,11 @@
 		99AA72EF14EC550900FB56E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				OTHER_LDFLAGS = (
+					"-lpcap",
+					"-lz",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -204,6 +232,7 @@
 				99AA72EF14EC550900FB56E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

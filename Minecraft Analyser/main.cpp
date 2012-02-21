@@ -2,17 +2,18 @@
 
 #include "packets.h"
 #include "unpack.h"
+#include "player.h"
 
 /* ethernet headers are always exactly 14 bytes */
 #define SIZE_ETHERNET 14
 
-void myCallback(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
+void myCallback(u_char *param, const struct pcap_pkthdr *header, const u_char *packet) {
     const struct sniff_ethernet *ethernet; /* The ethernet header */
 	const struct sniff_ip *ip; /* The IP header */
 	const struct sniff_tcp *tcp; /* The TCP header */
     unsigned char *payload; /* Packet payload */
     int packet_id;
-    double x, y, z;
+    Player* player;
     
     u_int size_ip;
 	u_int size_tcp;
@@ -30,14 +31,19 @@ void myCallback(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 		printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
 		return;
 	}
-	payload = (unsigned char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
+	if (ntohs(tcp->th_dport) != 25565)
+        return;
+    
+    player = reinterpret_cast<Player*>(param);
+    
+    payload = (unsigned char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
     
     packet_id = (int)payload[0];
-    if ( packet_id == 11 && ntohs(tcp->th_dport) == 25565) {
-        x = unpack(payload+1);
-        y = unpack(payload+9);
-        z = unpack(payload+25);
-        std::cout << "Paquet intercepte -> " << x << ", " << y << ", " << z << std::endl;
+    if ( packet_id == 11) {
+        player->x = unpack_double(payload+1);
+        player->y = unpack_double(payload+9);
+        player->z = unpack_double(payload+25);
+        std::cout << "Paquet intercepte -> " << player->x << ", " << player->y << ", " << player->z << std::endl;
     }
     
 }
@@ -49,6 +55,8 @@ int main(int argc, char *argv[])
     char errbuf[PCAP_ERRBUF_SIZE];	/* Error string */
     bpf_u_int32 mask;		/* Our netmask */
     bpf_u_int32 net;		/* Our IP */
+    
+    Player* player = new Player();
     
     /* Define the device */
     //dev = pcap_lookupdev(errbuf);
@@ -71,7 +79,7 @@ int main(int argc, char *argv[])
         return(2);
     }
     
-    if( pcap_loop(handle, -1, myCallback, NULL) == -1) {
+    if( pcap_loop(handle, -1, myCallback, reinterpret_cast<u_char*>(player)) == -1) {
         fprintf(stderr, "Error while looping: %s\n", pcap_geterr(handle));
         return(2);
     }
