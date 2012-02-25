@@ -22,14 +22,14 @@ void myCallback(u_char *param, const struct pcap_pkthdr *header, const u_char *p
 	ip = (struct sniff_ip*)(packet + SIZE_ETHERNET);
 	size_ip = IP_HL(ip)*4;
 	if (size_ip < 20) {
-		printf("   * Invalid IP header length: %u bytes\n", size_ip);
-		return;
+		//printf("   * Invalid IP header length: %u bytes\n", size_ip);
+		//return;
 	}
 	tcp = (struct sniff_tcp*)(packet + SIZE_ETHERNET + size_ip);
 	size_tcp = TH_OFF(tcp)*4;
 	if (size_tcp < 20) {
-		printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
-		return;
+		//printf("   * Invalid TCP header length: %u bytes\n", size_tcp);
+		//return;
 	}
 	if (ntohs(tcp->th_dport) != 25565)
         return;
@@ -43,7 +43,13 @@ void myCallback(u_char *param, const struct pcap_pkthdr *header, const u_char *p
         player->x = unpack_double(payload+1);
         player->y = unpack_double(payload+9);
         player->z = unpack_double(payload+25);
-        std::cout << "Paquet intercepte -> " << player->x << ", " << player->y << ", " << player->z << std::endl;
+        //std::cout << "Paquet intercepte -> " << player->x << ", " << player->y << ", " << player->z << std::endl;
+    }
+    
+    //printf("%02X",packet_id);
+    
+    if ( packet_id == 51) {
+        std::cout << "Paquet 51 intercepte" << std::endl;
     }
     
 }
@@ -61,23 +67,37 @@ int main(int argc, char *argv[])
     /* Define the device */
     //dev = pcap_lookupdev(errbuf);
     dev = "en1";
+    
     //dev = argv[1];
     if (dev == NULL) {
         fprintf(stderr, "Couldn't find default device: %s\n", errbuf);
         return(2);
     }
-    /* Find the properties for the device */
+    // Find the properties for the device
     if (pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
         fprintf(stderr, "Couldn't get netmask for device %s: %s\n", dev, errbuf);
         net = 0;
         mask = 0;
     }
-    /* Open the session in promiscuous mode */
-    handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
+    // Open the session in promiscuous mode
+    handle = pcap_open_live(dev, 65535, 1, 100, errbuf);
     if (handle == NULL) {
         fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
         return(2);
     }
+    
+    
+    /*handle = pcap_create(dev, errbuf);
+    if (handle == NULL) {
+        fprintf(stderr, "Couldn't open device %s: %s\n", dev, errbuf);
+        return(2);
+    }
+    
+    if (pcap_activate(handle) == -1) {
+        fprintf(stderr, "Error while acitvating handle\n", pcap_geterr(handle));
+        return(2);
+    }
+    */
     
     if( pcap_loop(handle, -1, myCallback, reinterpret_cast<u_char*>(player)) == -1) {
         fprintf(stderr, "Error while looping: %s\n", pcap_geterr(handle));
